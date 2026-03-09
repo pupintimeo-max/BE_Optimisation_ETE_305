@@ -4,10 +4,10 @@ import itertools
 import time
 import numpy as np
 
-# --- 1. Chargement des données ---
-df_trains_arcs = pd.read_csv("trains_arcs_processed.csv")
-df_planes_arcs = pd.read_csv("planes_arcs_processed.csv")
-train_cities = pd.read_csv("train_cities.csv")
+# Chargement des données 
+df_trains_arcs = pd.read_csv("BE_optmisation/trains_arcs_processed.csv")
+df_planes_arcs = pd.read_csv("BE_optmisation/planes_arcs_processed.csv")
+train_cities = pd.read_csv("BE_optmisation/train_cities.csv")
 
 
 def create_arcs(df, mode):
@@ -35,10 +35,10 @@ train_arcs = create_arcs(df_trains_arcs, "train")
 plane_arcs = create_arcs(df_planes_arcs, "avion")
 Arcs = {**train_arcs, **plane_arcs}
 Modes = ["train", "avion"]
-T_transf = 15
+T_transf = 120
 T_access = {"train": 30, "avion": 120}
 
-# --- 2. Génération des combinaisons ---
+# Génération des combinaisons 
 villes_avec_gares = set(train_cities["Villes"].unique())
 mask_gare = (df_planes_arcs["Ville_DEP"].isin(villes_avec_gares)) & (
     df_planes_arcs["Ville_DES"].isin(villes_avec_gares)
@@ -54,7 +54,7 @@ combinaisons = list(
 print(f"Début de l'optimisation sur {len(combinaisons)} trajets...")
 
 
-# --- 3. Fonction d'Optimisation ---
+# Fonction d'Optimisation
 def optimiser_trajet(O, D):
     key_avion = (O, D, "avion")
     if key_avion not in Arcs:
@@ -157,7 +157,7 @@ def optimiser_trajet(O, D):
     return None
 
 
-# --- 4. Boucle de traitement ---
+# Boucle de traitement 
 start_time = time.time()
 resultats = []
 for idx, (O, D) in enumerate(combinaisons):
@@ -169,7 +169,7 @@ for idx, (O, D) in enumerate(combinaisons):
             f"Progression : {idx + 1}/{len(combinaisons)}... ({time.time()-start_time:.1f}s)"
         )
 
-# --- 5. Bilan Final ---
+# Bilan Final
 df_bilan = pd.DataFrame(resultats)
 
 if not df_bilan.empty:

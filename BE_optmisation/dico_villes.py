@@ -1,5 +1,4 @@
 dico_villes = {
-    # --- Modèle multi-aéroports (Royaume-Uni, France, Italie, etc.) ---
     "EGLL": "Londres",
     "EGKK": "Londres",
     "EGSS": "Londres",
@@ -40,7 +39,6 @@ dico_villes = {
     "EDLV": "Düsseldorf",
     "LIPZ": "Venise",
     "LIPH": "Venise",
-    # --- Reste des 470 aéroports (Ordre d'apparition) ---
     "LTAI": "Antalya",
     "LTAF": "Adana",
     "EDDK": "Cologne/Bonn",

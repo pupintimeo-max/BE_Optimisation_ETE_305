@@ -3,9 +3,9 @@ import pandas as pd
 import time
 import numpy as np
 
-# --- 1. Chargement des données ---
-df_trains_arcs = pd.read_csv("trains_arcs_processed.csv")
-df_planes_arcs = pd.read_csv("planes_arcs_processed.csv")
+# Chargement des données 
+df_trains_arcs = pd.read_csv("BE_optmisation/trains_arcs_processed.csv")
+df_planes_arcs = pd.read_csv("BE_optmisation/planes_arcs_processed.csv")
 
 
 def create_arcs(df, mode):
@@ -33,12 +33,11 @@ train_arcs = create_arcs(df_trains_arcs, "train")
 plane_arcs = create_arcs(df_planes_arcs, "avion")
 Arcs = {**train_arcs, **plane_arcs}
 
-# --- Paramètres ---
+# Paramètres
 Modes = ["train", "avion"]
 T_transf = 15
 T_access = {"train": 30, "avion": 120}
 
-# --- Pré-calcul des constantes pour accélérer PuLP ---
 relevant_arcs_keys = list(Arcs.keys())
 villes_presentes = list(
     set([k[0] for k in relevant_arcs_keys] + [k[1] for k in relevant_arcs_keys])
@@ -47,15 +46,15 @@ Transferts_keys = [
     (i, m, k) for i in villes_presentes for m in Modes for k in Modes if m != k
 ]
 
-# --- 2. Préparation des trajets à tester ---
+# Préparation des trajets à tester 
 liaisons_a_tester = (
-    df_planes_arcs[["Ville_DEP", "Ville_DES"]].drop_duplicates(keep="first").head(20)
+    df_planes_arcs[["Ville_DEP", "Ville_DES"]].drop_duplicates(keep="first")#.head()
 )
 
 print(f"Analyse de {len(liaisons_a_tester)} liaisons aériennes réelles...")
 
 
-# --- 3. Fonction d'Optimisation ---
+# Fonction d'Optimisation
 def optimiser_trajet(O, D):
     key_avion = (O, D, "avion")
     if key_avion not in Arcs:
@@ -171,7 +170,7 @@ def optimiser_trajet(O, D):
     return None
 
 
-# --- 4. Exécution ---
+# Exécution 
 start_time = time.time()
 resultats = []
 
@@ -186,7 +185,7 @@ for idx, row in enumerate(liaisons_a_tester.itertuples()):
             f"Progression : {idx + 1}/{len(liaisons_a_tester)} liaisons traitées... ({elapsed:.1f}s)"
         )
 
-# --- 5. Bilan Final ---
+# Bilan Final 
 df_bilan = pd.DataFrame(resultats)
 
 if not df_bilan.empty:

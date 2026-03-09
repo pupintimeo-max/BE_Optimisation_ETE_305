@@ -2,8 +2,6 @@
 
 Projet d'optimisation de trajets inter-villes en Europe, orienté **réduction des émissions de CO₂** sous contrainte de temps, via un modèle **multimodal train + avion** (programmation linéaire en nombres entiers avec PuLP).
 
-> Ce README documente volontairement les scripts `.py` et les données `.csv` du dépôt, en excluant les notebooks `.ipynb`.
-
 ## 1) Objectif du dépôt
 
 Le dépôt implémente une chaîne de traitement en 3 briques :
@@ -16,7 +14,7 @@ Le dépôt implémente une chaîne de traitement en 3 briques :
 	 - objectif = minimiser les émissions ;
 	 - contrainte = ne pas dépasser un temps maximal dérivé du trajet avion de référence.
 
-## 2) Arborescence utile (hors notebooks)
+## 2) Arborescence
 
 ```text
 .
@@ -31,8 +29,6 @@ Le dépôt implémente une chaîne de traitement en 3 briques :
 		├── optim_pulp_all_liaisons_plane_gare.py
 		├── t_max.py
 		├── train_co2_emissions.py
-		├── train_cities.csv
-		├── train_lines.csv
 		├── .gitignore
 		└── data/
 				├── ac_model_coefficients.csv
@@ -50,13 +46,7 @@ Le dépôt implémente une chaîne de traitement en 3 briques :
 	- Contient un cas spécifique Eurostar (Londres ↔ continent).
 
 - **`BE_optmisation/fuel_consumption_calc.py`**
-	- Calcule la consommation carburant estimée par vol via une formule quadratique FEAT :
-    
-		\[
-			ext{fuel}(d)=a_1 d^2 + a_2 d + b
-		\]
-    
-		où \(d\) est la distance en km et \((a_1,a_2,b)\) viennent des coefficients avion.
+	- Calcule la consommation carburant estimée par vol via une formule quadratique FEAT 
 
 - **`BE_optmisation/function_data.py`**
 	- Pipeline principal côté vols :

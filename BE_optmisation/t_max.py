@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-# --- Paramètres de la fonction ---
+#  Paramètres de la fonction 
 A = 0.8
 B = 0.0085
 C = 0.45
@@ -15,7 +15,7 @@ t_avion_h = t_avion_min / 60
 coeff_allongement = A * np.exp(-B * t_avion_min) + C
 t_max_h = (t_avion_min * (1 + coeff_allongement)) / 60
 
-# --- Création du graphique ---
+#  Création du graphique 
 fig, ax1 = plt.subplots(figsize=(11, 6))
 
 # Axe X : Temps en HEURES

@@ -8,7 +8,7 @@ import function_data
 import itertools
 import random
 
-# --- Données ---
+#  Données 
 df_train = pd.read_csv("train_lines.csv")
 train_cities = pd.read_csv("train_cities.csv")
 df_plane = pd.read_csv("data/Flights_20191201_20191231.csv")
@@ -66,7 +66,7 @@ for i, j, m in Arcs.keys():
     Villes_set.add(j)
 Villes = list(Villes_set)
 
-# --- 1. SÉLECTION DES VILLES ---
+# SÉLECTION DES VILLES
 print("--- OPTIMISATEUR DE TRAJET ---")
 
 O = input("Entrez la ville de départ : ").strip()
@@ -99,7 +99,7 @@ else:
     temps_avion_vol = None
     emissions_avion = None
 
-# --- 2. INITIALISATION DU MODÈLE ---
+# INITIALISATION DU MODÈLE
 prob = pulp.LpProblem("Minimisation_Emissions", pulp.LpMinimize)
 
 # Variables
@@ -108,7 +108,7 @@ Transferts = [(i, m, k) for i in Villes for m in Modes for k in Modes if m != k]
 y = pulp.LpVariable.dicts("y", Transferts, cat=pulp.LpBinary)
 
 # Fonction Objectif
-# rajout d'un tout petit poids sur le temps de trajet pour éviter des abérations
+# rajout d'un poids sur le temps de trajet pour éviter des abérations
 temps_trajet = pulp.lpSum(
     [x[(i, j, m)] * (Arcs[(i, j, m)][1] + T_access[m]) for (i, j, m) in Arcs.keys()]
 )
@@ -168,11 +168,9 @@ prob += temps_trajet + temps_transfert <= T_max
 # Résolution
 prob.solve(pulp.PULP_CBC_CMD(msg=False))
 
-# --- 3. AFFICHAGE DES RÉSULTATS ---
+# AFFICHAGE DES RÉSULTATS 
 print("\n" + "=" * 50)
-
-# 3A. Toujours afficher la référence en avion en premier
-print("✈️ TRAJET INITIAL EN AVION (Référence) :")
+print(" TRAJET INITIAL EN AVION (Référence) :")
 if key_avion in Arcs:
     print(
         f"  Temps total avec accès : {temps_avion_total} minutes ({temps_avion_total/60:.1f}h)"
@@ -185,9 +183,9 @@ else:
 
 print("-" * 50)
 
-# 3B. Afficher le résultat de l'optimisation
+# Afficher le résultat de l'optimisation
 if prob.status == pulp.LpStatusOptimal:
-    print("✅ ALTERNATIVE MULTIMODALE TROUVÉE :")
+    print(" ALTERNATIVE MULTIMODALE TROUVÉE :")
     temps_total_final = pulp.value(temps_trajet + temps_transfert)
     emissions_finales = pulp.value(prob.objective)
 
@@ -200,11 +198,11 @@ if prob.status == pulp.LpStatusOptimal:
     # Calcul du gain de CO2
     if key_avion in Arcs:
         gain_co2 = ((emissions_avion - emissions_finales) / emissions_avion) * 100
-        print(f"  🌍 Bilan Carbone    : Émissions réduites de {gain_co2:.1f}%")
+        print(f"   Bilan Carbone    : Émissions réduites de {gain_co2:.1f}%")
 
-    print("\n🛤️ Chemin emprunté :")
+    print("\n Chemin emprunté :")
 
-    # --- EXTRACTION ET CALCULS DE DÉCOMPOSITION DU TEMPS ---
+    #  EXTRACTION ET CALCULS DE DÉCOMPOSITION DU TEMPS 
     temps_effectif_total = 0
     temps_access_total = 0
     temps_transfert_total = 0
@@ -224,9 +222,9 @@ if prob.status == pulp.LpStatusOptimal:
     for i, m, k in Transferts:
         if y[(i, m, k)].varValue is not None and y[(i, m, k)].varValue > 0.5:
             temps_transfert_total += T_transf
-            print(f"  -> 🔄 Transfert à {i} : {m} vers {k} ({T_transf} min)")
+            print(f"  ->  Transfert à {i} : {m} vers {k} ({T_transf} min)")
 
-    print("\n⏱️ Décomposition du temps :")
+    print("\n⏱ Décomposition du temps :")
     print(
         f"  - Temps de trajet effectif : {temps_effectif_total:.0f} minutes ({temps_effectif_total/60:.1f}h)"
     )
@@ -236,7 +234,7 @@ if prob.status == pulp.LpStatusOptimal:
     )
 
 else:
-    print("❌ AUCUNE ALTERNATIVE RESPECTANT LE TEMPS MAX.")
+    print(" AUCUNE ALTERNATIVE RESPECTANT LE TEMPS MAX.")
     print("  Maintien du trajet initial en avion par défaut.")
 
 print("=" * 50)

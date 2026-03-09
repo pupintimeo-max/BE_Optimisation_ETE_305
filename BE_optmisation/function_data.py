@@ -3,26 +3,12 @@ import numpy as np
 from dico_villes import dico_villes
 from fuel_consumption_calc import calculer_fuel_feat
 
-
-#file_path_flights = "../Jeux de données-20260109/Flights_20191201_20191231.csv/Flights_20191201_20191231.csv"
-
-# Chargement avec paramètres spécifiques
-# df_Flights = pd.read_csv(
-#     file_path_flights,
-#     sep=",",  # Définit le séparateur (souvent ; en France)
-#     encoding="utf-8",  # Encodage (essayer 'latin1' ou 'cp1252' si erreur)
-#     index_col=0,  # Utilise la 1ère colonne comme index (optionnel)
-#     na_values=["n/a", "?"],  # Convertit ces valeurs spécifiques en NaN (vide)
-# )
-
 feat_model_df = pd.read_csv("./data/ac_model_coefficients.csv")
 
 file_path_ac = "./data/ac_model_coefficients_airliners.csv"
 
 blacklist_operators = [
-    # --- AC Inconnu ---
     "ZZZ",
-    # --- CARGO (Fret) ---
     "FDX",
     "UPS",
     "BCS",
@@ -35,7 +21,6 @@ blacklist_operators = [
     "SRN",
     "ABR",
     "SWT",
-    # --- JETS PRIVÉS & AFFAIRES ---
     "NJE",
     "VJT",
     "AHO",
@@ -43,12 +28,9 @@ blacklist_operators = [
     "SVW",
     "MMD",
     "DOP",
-    # --- HÉLICOPTÈRES ---
     "BHL",
-    # --- HORS PÉRIMÈTRE (Israël, etc.) ---
     "ELY",
     "ISR",
-    # --- CHARTER/WET LEASE COMPLEXE (Optionnel, à retirer pour pureté) ---
     "HKS",
     "AWC",
     "MSA",
@@ -60,7 +42,6 @@ def select_top_villles(df_v, n=10):
     mask_villes = df_v["Rang"].isin(list_top)
 
     top_v = df_v[mask_villes]
-    # print("Premiere villes : \n", top_v.head())
     return top_v
 
 
@@ -76,8 +57,6 @@ def select_flights_train(df_v, df_F):
 
     vols_France = vols_France[vols_France["ICAO"] != "ZZZ"]
 
-    # print(f"Nombre de vols trouvés : {len(vols_France)}")
-    # print(vols_France[["ADEP", "ADES"]].head())
 
     return vols_France
 
@@ -85,13 +64,10 @@ def select_flights_train(df_v, df_F):
 def select_flights_europe(df):
     codes_europe = ["L", "E", "B"]
 
-    # 3. On crée un filtre : Le 1er caractère de ADEP *ET* de ADES doit être dans la liste
-    # .str[0] permet de prendre juste la première lettre de la colonne
     filtre_europe = df["ADEP"].str[0].isin(codes_europe) & df["ADES"].str[0].isin(
         codes_europe
     )
 
-    # 4. On applique le filtre
     vols_europe = df[filtre_europe]
 
     print(f"Nombre de vols europe : {len(vols_europe)}")
@@ -136,8 +112,6 @@ def all_liaisons(df, seuil_vols=60):
         classement_liaisons["Nombre_de_vols"] >= seuil_vols
     ]
 
-    # print(f"Ensemble des liaisons (Sens confondus) :")
-    # print(classement_liaisons.head())
 
     return classement_liaisons
 
@@ -151,11 +125,7 @@ def name_liaison(df_liaisons, dico):
 
     df_liaisons_copy = df_liaisons_copy.dropna(subset=["Ville_1", "Ville_2"])
 
-    # print(
-    #     df_liaisons_copy[
-    #         ["Aeroport_1", "Ville_1", "Aeroport_2", "Ville_2", "Nombre_de_vols"]
-    #     ]
-    # )
+
 
     return df_liaisons_copy
 
@@ -206,8 +176,6 @@ def mean_flight(df_flights):
 
     df["Flight_Time_min"] = (df["ARRIVAL"] - df["OFF_BLOCK"]).dt.total_seconds() / 60.0
 
-    # # Nettoyage des éventuels temps négatifs ou aberrants
-    # df = df[df["Flight_Time_min"] > 0]
 
     edges_df = (
         df.groupby(["ADEP", "ADES"])
@@ -294,6 +262,3 @@ def treatment(df) :
     return filtred_mean
 
 
-#df_liaisons_named = name_liaison(df_liaisons, dico_villes)
-#list_top_companies = top_companies["AC Operator"].values
-#filtred_mean.to_csv("dat_vol.csv", index=False)
