@@ -23,7 +23,6 @@ Le dépôt implémente une chaîne de traitement en 3 briques :
 		├── dico_villes.py
 		├── fuel_consumption_calc.py
 		├── function_data.py
-		├── optim_pulp.py
 		├── optim_pulp_trajet_unique.py
 		├── optim_pulp_all_liaisons_plane.py
 		├── optim_pulp_all_liaisons_plane_gare.py
